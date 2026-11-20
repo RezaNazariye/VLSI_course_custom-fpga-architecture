@@ -18,19 +18,19 @@ Each CLB contains:
 *   **1 SRAM cell** configuring a multiplexer that selects between the combinational LUT output or a registered (flip-flop) output.
 *   *Total:* 17 SRAM bits per CLB.
 
-![CLB Architecture](images/clb.png)
+![CLB Architecture](images/CLB.png)
 *Figure 1: Internal architecture of the Configurable Logic Block (CLB).*
 
 ### 2. Connector (Routing Matrix)
 The connector routes the output of `CLBa` to the four inputs of `CLBb` via four 2-to-1 multiplexers. The select lines for these muxes are configured via 4 SRAM cells, allowing mapping between the two CLBs.
 
-![Connector Architecture](images/connector.png)
+![Connector Architecture](images/Connector.png)
 *Figure 2: The programmable routing matrix (Connector).*
 
 ### 3. FPGA Top-Level
 The top-level module integrates 2 CLBs and 1 Connector. The programming sequence expects a **38-bit serial bitstream** (17 bits for CLBa, 4 bits for the Connector, and 17 bits for CLBb).
 
-![FPGA Top-Level Architecture](images/fpga_top.png)
+![FPGA Top-Level Architecture](images/FPGA.png)
 *Figure 3: Complete FPGA top-level architecture showing CLBa, Connector, and CLBb.*
 
 *   **Inputs:** `clk`, `rst_n`, `Ia` (4-bit), `Ib` (4-bit), `bit_stream`, `bit_stream_valid`
