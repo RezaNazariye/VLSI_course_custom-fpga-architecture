@@ -76,3 +76,5 @@ The testbench was run for 10,000 randomized test vectors per function. The self-
 
 ![Simulation Results](images/OuputLog.png)
 *Figure 6: Vivado simulation log showing a 100% pass rate (0 failures) for all five implemented functions.*
+
+there's an academic report that's more detailed than this one, in فارسی. you can find it in here: ![Farsi_Report](report/HW1_Report_Farsi.pdf)
