@@ -61,5 +61,5 @@ The outputs are compared against a behavioral "Golden Model" (`functions.v`). Th
 ## Results
 The testbench was run for 10,000 randomized test vectors per function. The self-checking mechanism compares the synthesized FPGA output against the behavioral golden model, achieving **100% accuracy** across all test cases.
 
-![Simulation Results](images/Vivado_ouputLog.png)
+![Simulation Results](images/OuputLog.png)
 *Figure 6: Vivado simulation log showing a 100% pass rate (0 failures) for all five implemented functions.*
