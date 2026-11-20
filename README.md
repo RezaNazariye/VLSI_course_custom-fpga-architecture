@@ -18,26 +18,34 @@ Each CLB contains:
 *   **1 SRAM cell** configuring a multiplexer that selects between the combinational LUT output or a registered (flip-flop) output.
 *   *Total:* 17 SRAM bits per CLB.
 
-![CLB Architecture](images/CLB.png)
+![CLB Architecture](images/clb.png)
 *Figure 1: Internal architecture of the Configurable Logic Block (CLB).*
 
 ### 2. Connector (Routing Matrix)
 The connector routes the output of `CLBa` to the four inputs of `CLBb` via four 2-to-1 multiplexers. The select lines for these muxes are configured via 4 SRAM cells, allowing mapping between the two CLBs.
 
-![Connector Architecture](images/Connector.png)
+![Connector Architecture](images/connector.png)
 *Figure 2: The programmable routing matrix (Connector).*
 
 ### 3. FPGA Top-Level
 The top-level module integrates 2 CLBs and 1 Connector. The programming sequence expects a **38-bit serial bitstream** (17 bits for CLBa, 4 bits for the Connector, and 17 bits for CLBb).
 
-![FPGA Top-Level Architecture](images/FPGA.png)
+![FPGA Top-Level Architecture](images/fpga_top.png)
 *Figure 3: Complete FPGA top-level architecture showing CLBa, Connector, and CLBb.*
 
 *   **Inputs:** `clk`, `rst_n`, `Ia` (4-bit), `Ib` (4-bit), `bit_stream`, `bit_stream_valid`
 *   **Outputs:** `CLBb_O` (1-bit)
 
+## Bitstream Programming Sequence
+To configure the FPGA, a serial bitstream is shifted into the device. The `bit_stream_valid` signal acts as an active-high enable for the configuration memory. 
+
+The waveform below demonstrates the loading sequence. Over exactly 38 clock cycles, the 16-bit LUT SRAM, 1-bit MUX SRAM, 4-bit Connector SRAMs, and the second CLB's 17-bit configuration are programmed sequentially.
+
+![Programming Waveform](images/programming_waveform.png)
+*Figure 4: Vivado simulation waveform showing the 38-cycle bitstream loading sequence.*
+
 ## Verification & Implemented Functions
-The design is verified using a simple SystemVerilog testbench (`tb_fpga.sv`). The testbench reads the bitstream from `bitstreams.txt`, programs the FPGA, and applies random stimulus. 
+The design is verified using a self-checking SystemVerilog testbench (`tb_fpga.sv`). The testbench reads the bitstream from `bitstreams.txt`, programs the FPGA, and applies random stimulus. 
 
 The outputs are compared against a behavioral "Golden Model" (`functions.v`). The design successfully implements and verifies the following 5 functions:
 
@@ -46,3 +54,12 @@ The outputs are compared against a behavioral "Golden Model" (`functions.v`). Th
 3.  **Function 3:** `f = ((a | b) & (!c & d)) ^ e` (Registered output).
 4.  **Function 4:** `f = b >= a` (3-bit unsigned comparator, combinational).
 5.  **Function 5:** `f = b >= a` (3-bit unsigned comparator, 2-stage pipelined).
+
+![Simulation Waveform](images/simulation_waveform.png)
+*Figure 5: Overall simulation waveform showing random stimulus application and golden model comparison.*
+
+## Results
+The testbench was run for 10,000 randomized test vectors per function. The self-checking mechanism compares the synthesized FPGA output against the behavioral golden model, achieving **100% accuracy** across all test cases.
+
+![Simulation Results](images/sim_log.png)
+*Figure 6: Vivado simulation log showing a 100% pass rate (0 failures) for all five implemented functions.*
