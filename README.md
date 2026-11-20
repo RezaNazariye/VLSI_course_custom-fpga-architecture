@@ -55,6 +55,19 @@ The outputs are compared against a behavioral "Golden Model" (`functions.v`). Th
 4.  **Function 4:** `f = b >= a` (3-bit unsigned comparator, combinational).
 5.  **Function 5:** `f = b >= a` (3-bit unsigned comparator, 2-stage pipelined).
 
+for this project we manualy synthesis of the logic functions into the 38-bit configuration bitstream. The 38-bit string is divided as follows: `[17-bit CLBa config] - [4-bit Connector config] - [17-bit CLBb config]`.
+
+For complex functions requiring more than 4 inputs (like Function 3 and Function 4), the logic was manually partitioned across the two CLBs using the Connector. 
+
+**Example: Function 3 (Registered Output)**
+*   `f = ((a | b) & (!c & d)) ^ e`
+*   **CLBa:** Implements the 4-input LUT `((a | b) & (!c & d))` and routes the output through the programmable connector.
+*   **CLBb:** Takes the output of CLBa as one input, and `e` as the second input, implementing a 2-input XOR `X ^ e`. The output is then registered.
+
+**Example: Function 4 (Combinational 3-bit Comparator)**
+*   `f = b >= a`
+*   The 3-bit comparison was split: CLBa compares the 2 Least Significant Bits (LSBs) and outputs the intermediate result. This is routed through the Connector to CLBb, which evaluates the Most Significant Bit (MSB) alongside the LSB comparison result to determine the final output.
+
 ![Simulation Waveform](images/Vivado_waveforms.png)
 *Figure 5: Overall simulation waveform showing random stimulus application and golden model comparison.*
 
